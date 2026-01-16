@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Nivellement</title>
 <link rel="apple-touch-icon" href="icon.png">
+
 <style>
 body {
     font-family: -apple-system, sans-serif;
@@ -18,6 +19,11 @@ input, button {
     font-size: 17px;
     border-radius: 10px;
     border: none;
+}
+input {
+    width: 90%;
+    max-width: 300px;
+    text-align: center;
 }
 button {
     background: #38bdf8;
@@ -41,6 +47,7 @@ button {
 .bg-red   { background: #7f1d1d; }
 </style>
 </head>
+
 <body>
 
 <h2>Nivellement</h2>
@@ -48,16 +55,16 @@ button {
 <div class="box" id="mainBox">
 
 <p><b>Δh Hin (m)</b></p>
-<input id="dh_hin" type="number">
+<input id="dh_hin" type="text" inputmode="decimal" pattern="-?[0-9]*[.,]?[0-9]*">
 
 <p><b>Δh Rück (m)</b></p>
-<input id="dh_rueck" type="number">
+<input id="dh_rueck" type="text" inputmode="decimal" pattern="-?[0-9]*[.,]?[0-9]*">
 
 <p><b>s Hin (km)</b></p>
-<input id="s_hin" type="number">
+<input id="s_hin" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*">
 
 <p><b>s Rück (km)</b></p>
-<input id="s_rueck" type="number">
+<input id="s_rueck" type="text" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*">
 
 <br>
 <button onclick="rechne()">Prüfen</button>
@@ -69,12 +76,18 @@ button {
 </div>
 
 <script>
+function parseNum(id) {
+    let v = document.getElementById(id).value.trim();
+    if (v === "") return NaN;
+    return parseFloat(v.replace(",", "."));
+}
+
 function rechne() {
 
-    let T4 = parseFloat(document.getElementById("dh_hin").value);
-    let T5 = parseFloat(document.getElementById("dh_rueck").value);
-    let S4 = parseFloat(document.getElementById("s_hin").value);
-    let S5 = parseFloat(document.getElementById("s_rueck").value);
+    let T4 = parseNum("dh_hin");
+    let T5 = parseNum("dh_rueck");
+    let S4 = parseNum("s_hin");
+    let S5 = parseNum("s_rueck");
 
     let W = "", Z = "", Z_ADV = "";
 
@@ -98,7 +111,6 @@ function rechne() {
 
     zBox.classList.remove("dim");
     zAdvBox.classList.remove("dim");
-
     box.className = "box";
 
     let ratio = null;
@@ -106,8 +118,7 @@ function rechne() {
     if (W > 0) {
         zAdvBox.classList.add("dim");
         ratio = W / Z;
-    }
-    else if (W < 0) {
+    } else if (W < 0) {
         zBox.classList.add("dim");
         ratio = W / Z_ADV;
     }
@@ -117,16 +128,20 @@ function rechne() {
         if (ratio < 0.34) box.classList.add("bg-black");
         else if (ratio < 0.666) box.classList.add("bg-green");
         else if (ratio < 1) box.classList.add("bg-blue");
-        else box.classList.add("bg-red");  // ab 1 → rot
+        else box.classList.add("bg-red");
     }
 
-    // ===== Anzeige der Werte =====
-    document.getElementById("w").innerText = "W: " + (W === "" ? "—" : W.toFixed(2));
-    zBox.innerText = "Z (LSA): " + (Z === "" ? "—" : Z.toFixed(2));
-    zAdvBox.innerText = "Z (AdV): " + (Z_ADV === "" ? "—" : Z_ADV.toFixed(2));
+    // ===== Anzeige =====
+    document.getElementById("w").innerText =
+        "W: " + (W === "" ? "—" : W.toFixed(2));
+
+    zBox.innerText =
+        "Z (LSA): " + (Z === "" ? "—" : Z.toFixed(2));
+
+    zAdvBox.innerText =
+        "Z (AdV): " + (Z_ADV === "" ? "—" : Z_ADV.toFixed(2));
 }
 </script>
 
 </body>
-
 </html>
